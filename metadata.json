@@ -1,0 +1,8 @@
+{
+  "name": "AI Product Research & PRD Generator",
+  "description": "Turn your product idea into a complete product strategy and PRD using AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
