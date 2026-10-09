@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { ProductReportData } from '../types/report.ts';
 import { generateMarkdownReport, downloadFile } from '../utils/exportReport.ts';
+import { generatePdfReport } from '../utils/generatePdf.ts';
 import { normalizeReport, safeArray } from '../utils/normalizeReport.ts';
 import { SectionErrorBoundary } from './ErrorBoundary.tsx';
 
@@ -159,6 +160,8 @@ export const ReportView: React.FC<ReportViewProps> = ({ report: rawReport, onNew
   const [activeSection, setActiveSection] = useState('sec-01');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const [searchFilter, setSearchFilter] = useState('');
 
   // Handle intersection observer to highlight current section in sidebar
@@ -200,10 +203,18 @@ export const ReportView: React.FC<ReportViewProps> = ({ report: rawReport, onNew
     }
   };
 
-  const handleDownload = () => {
-    const markdown = generateMarkdownReport(report);
-    const filename = `${report.meta.productName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-prd-report.md`;
-    downloadFile(markdown, filename);
+  const handleDownload = async () => {
+    if (isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
+    setPdfError(null);
+    try {
+      await generatePdfReport(report);
+    } catch (err: any) {
+      console.error('Failed to generate PDF:', err);
+      setPdfError('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
 
   const handlePrint = () => {
@@ -272,10 +283,21 @@ export const ReportView: React.FC<ReportViewProps> = ({ report: rawReport, onNew
 
             <button
               onClick={handleDownload}
-              className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              disabled={isGeneratingPdf}
+              className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-75 disabled:cursor-wait rounded-lg shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Download Report as PDF"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Download Report</span>
+              {isGeneratingPdf ? (
+                <>
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>Generating PDF...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download PDF</span>
+                </>
+              )}
             </button>
 
             <button
@@ -1722,8 +1744,11 @@ export const ReportView: React.FC<ReportViewProps> = ({ report: rawReport, onNew
             <div>
               <h3 className="text-base font-bold">Ready to export your product strategy?</h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                Download the complete PRD in Markdown format or copy it directly into Notion, Linear, or Jira.
+                Download the complete PRD as a publication-ready PDF or copy Markdown directly into Notion, Linear, or Jira.
               </p>
+              {pdfError && (
+                <p className="text-xs text-rose-400 mt-1 font-medium">{pdfError}</p>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -1734,9 +1759,20 @@ export const ReportView: React.FC<ReportViewProps> = ({ report: rawReport, onNew
               </button>
               <button
                 onClick={handleDownload}
-                className="px-4 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors cursor-pointer"
+                disabled={isGeneratingPdf}
+                className="px-4 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 disabled:opacity-75 disabled:cursor-wait text-white rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
               >
-                Download Markdown (.md)
+                {isGeneratingPdf ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Generating PDF...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download PDF</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

@@ -12,6 +12,7 @@ import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { ProductInput, ProductReportData } from './types/report.ts';
 import { sampleZomatoReport } from './data/sampleReport.ts';
 import { generateMarkdownReport, downloadFile } from './utils/exportReport.ts';
+import { generatePdfReport } from './utils/generatePdf.ts';
 import { normalizeReport } from './utils/normalizeReport.ts';
 import { AlertCircle, RefreshCw, FileText } from 'lucide-react';
 
@@ -38,6 +39,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
   const handleFieldChange = (field: keyof ProductInput, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -130,11 +132,17 @@ export default function App() {
     }
   };
 
-  const handleDownloadHeader = () => {
-    if (!report) return;
-    const md = generateMarkdownReport(report);
-    const filename = `${report.meta.productName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-prd-report.md`;
-    downloadFile(md, filename);
+  const handleDownloadHeader = async () => {
+    if (!report || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      await generatePdfReport(report);
+    } catch (err: any) {
+      console.error('Failed to generate PDF:', err);
+      setError('Failed to generate PDF document. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -146,6 +154,7 @@ export default function App() {
         onCopy={report ? handleCopyHeader : undefined}
         onDownload={report ? handleDownloadHeader : undefined}
         copied={copied}
+        isDownloading={isDownloading}
       />
 
       {/* Global Error Banner */}

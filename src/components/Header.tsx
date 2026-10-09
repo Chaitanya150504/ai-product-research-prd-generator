@@ -8,6 +8,7 @@ interface HeaderProps {
   onCopy?: () => void;
   onDownload?: () => void;
   copied?: boolean;
+  isDownloading?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,6 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
   onCopy,
   onDownload,
   copied,
+  isDownloading = false,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
@@ -84,12 +86,22 @@ export const Header: React.FC<HeaderProps> = ({
               {onDownload && (
                 <button
                   onClick={onDownload}
+                  disabled={isDownloading}
                   type="button"
-                  className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
-                  title="Download Report as Markdown"
+                  className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-75 disabled:cursor-wait rounded-lg shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
+                  title="Download Report as PDF"
                 >
-                  <Download className="w-4 h-4 text-slate-200" />
-                  <span>Download</span>
+                  {isDownloading ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 text-slate-200 animate-spin" />
+                      <span>Generating PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4 text-slate-200" />
+                      <span>Download PDF</span>
+                    </>
+                  )}
                 </button>
               )}
             </>
