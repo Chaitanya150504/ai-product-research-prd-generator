@@ -10,6 +10,7 @@ import {
   Users,
   Compass,
   CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { ProductInput } from '../types/report.ts';
 
@@ -20,6 +21,7 @@ interface HeroLandingProps {
   onFillSample: () => void;
   onTrySample: () => void;
   isLoading: boolean;
+  errorMessage?: string | null;
 }
 
 export const HeroLanding: React.FC<HeroLandingProps> = ({
@@ -29,6 +31,7 @@ export const HeroLanding: React.FC<HeroLandingProps> = ({
   onFillSample,
   onTrySample,
   isLoading,
+  errorMessage,
 }) => {
   return (
     <div className="w-full pb-20">
@@ -339,15 +342,26 @@ export const HeroLanding: React.FC<HeroLandingProps> = ({
               </div>
             </div>
 
+            {/* Inline Error if API call failed */}
+            {errorMessage && (
+              <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-start gap-3 text-xs sm:text-sm text-rose-900">
+                <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold">Unable to generate report</p>
+                  <p className="text-rose-700 mt-0.5 text-xs">{errorMessage}</p>
+                </div>
+              </div>
+            )}
+
             {/* Submit Button */}
-            <div className="pt-4">
+            <div className="pt-2">
               <button
                 type="submit"
                 disabled={isLoading || !formData.productName.trim() || !formData.featureIdea.trim()}
                 className="w-full py-4 px-6 text-base sm:text-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed rounded-2xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-5 h-5 text-indigo-200" />
-                <span>Generate Product Report</span>
+                <span>{isLoading ? 'Generating Report...' : 'Generate Product Report'}</span>
               </button>
               <p className="text-center text-xs text-slate-400 mt-2.5">
                 Generates all 20 sections including market sizing, competitor matrix, RICE scores, PRD &amp; roadmap.

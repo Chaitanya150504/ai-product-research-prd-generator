@@ -191,6 +191,7 @@ export default function App() {
             onFillSample={handleFillSample}
             onTrySample={handleTrySample}
             isLoading={isLoading}
+            errorMessage={error}
           />
         )}
       </main>
