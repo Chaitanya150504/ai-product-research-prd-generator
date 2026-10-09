@@ -806,89 +806,159 @@ export const sampleZomatoReport: ProductReportData = {
       'Corporate partnerships with co-working spaces (WeWork, Awfis) for office late-night overtime snack credits.',
     ],
   },
-  roadmap: {
-    days30: {
-      phase: 'Phase 1: Foundation, Discovery & Alpha Testing',
-      timeframe: 'Days 1 – 30',
-      focus: 'Build core AI recommendation pipeline, establish low-latency vector index, and validate with internal alpha testers.',
-      deliverables: [
-        'Finalized PRD and interactive Figma design system components.',
-        'Gemini 3.8 Flash prompt engineering and culinary embedding pipeline in Python/Go.',
-        'Initial home-screen mood selector widget and 3-card card component in React Native.',
-        'Alpha launch to 5,000 internal Zomato employees with bug-tracking dashboard.',
+  productRoadmap: [
+    {
+      phase: 'MVP Phase',
+      strategicFocus: 'Core Recommendation Engine & Frictionless Discovery',
+      keyInitiatives: [
+        'Build low-latency culinary taste and emotion embedding vector pipeline.',
+        'Deliver home-screen 1-tap mood carousel with 3 curated food cards.',
+        'Implement unified single-tap express checkout integration.',
       ],
-      milestones: 'Alpha rollout complete; P95 response time validated at ≤ 650ms; zero dietary classification bugs.',
-    },
-    days60: {
-      phase: 'Phase 2: Closed Beta, Operational Refinement & A/B Experimentation',
-      timeframe: 'Days 31 – 60',
-      focus: 'Roll out closed beta to 100,000 Zomato Gold subscribers; implement weather and temporal context triggers; optimize conversion funnel.',
-      deliverables: [
-        'Live A/B test running in Bangalore and Mumbai comparing MoodMatch vs Standard Home carousel.',
-        'Integration with real-time OpenWeatherMap API for monsoon & temperature triggers.',
-        'Express 1-tap checkout flow integration with UPI and stored payment methods.',
-        'Merchant partner dashboard showing mood-driven demand insights.',
+      keyDeliverables: [
+        'Production Gemini embedding & scoring service with caching layer.',
+        'Interactive mood chips component with instant dietary filtering.',
+        'Telemetry tracking for mood selection to order conversion.',
       ],
-      milestones: 'Statistically significant +12.8% conversion lift observed in beta cohort; AOV confirmed at ₹410+.',
-    },
-    days90: {
-      phase: 'Phase 3: General Availability (GA), Multi-City Rollout & Scale',
-      timeframe: 'Days 61 – 90',
-      focus: 'Public launch across top 15 metros; trigger national multi-channel marketing campaign; monitor North Star metrics and scale infrastructure.',
-      deliverables: [
-        'Full public GA launch on iOS and Android app stores for Tier-1 metros.',
-        'National social media and outdoor billboard ad campaign execution.',
-        'Automated real-time inventory and KDS stockout circuit-breaker in production.',
-        'Post-launch executive metrics dashboard in Looker tracking ₹140 Cr GMV trajectory.',
+      dependencies: [
+        'Catalog metadata tagging for cuisine emotional profiles.',
+        'Cart service API contract for direct 1-tap dish insertion.',
       ],
-      milestones: 'Reaching 1.5M+ daily mood orders; North Star Mood-to-Order Conversion Rate exceeding 42%; app store rating steady at 4.6+ stars.',
-    },
-  },
-  pmInterviewQuestions: [
-    {
-      id: 1,
-      question: 'Product Design: How would you design an intuitive, non-intrusive onboarding flow for Zomato MoodMatch that prevents user drop-off?',
-      category: 'Product Design & UX',
-      evaluationCriteria:
-        'Tests candidate\'s user empathy, friction minimization instincts, progressive disclosure principles, and cold-start problem solving.',
-      sampleAnswerApproach:
-        'A strong PM will avoid multi-step questionnaires or quizzes. They will propose 1-tap visual mood chips directly on the home screen, leverage automated contextual signals (time of day, current weather, past order history) to pre-highlight the most probable mood, and allow immediate single-tap exploration without forcing mandatory profile setup.',
+      successCriteria: 'P95 recommendation latency under 500ms and zero dietary restriction violation incidents.',
     },
     {
-      id: 2,
-      question: 'Metrics & Analytics: If overall browse-to-order conversion jumps by 15% after launch, but Average Order Value (AOV) drops by 8%, how would you diagnose this and what trade-offs would you evaluate?',
-      category: 'Product Metrics & Trade-offs',
-      evaluationCriteria:
-        'Tests analytical rigor, unit economics comprehension, cannibalization analysis, and strategic prioritization between order volume vs basket size.',
-      sampleAnswerApproach:
-        'Segment the data by mood category. Users picking "Late-Night Crunch" or "Quick Comfort" might be buying single dishes rather than multi-course family meals. Calculate net GMV impact: 1.15 orders × 0.92 AOV = 1.058 (a +5.8% net revenue gain!). Propose nudges like smart beverage/dessert pairings ("Complete your comfort meal with a hot gulab jamun for ₹40") to lift AOV back up without hurting conversion.',
+      phase: 'Beta Phase',
+      strategicFocus: 'Contextual Intelligence & Cohort Experimentation',
+      keyInitiatives: [
+        'Integrate real-time hyper-local weather and temporal context triggers.',
+        'Launch duo/group ordering compromise mode ("Duo Mood").',
+        'Enable merchant partner demand forecasting signals.',
+      ],
+      keyDeliverables: [
+        'Automated monsoon/heatwave weather API synchronizer.',
+        'A/B experimentation framework comparing MoodMatch vs standard categories.',
+        'Merchant portal widget indicating trending mood surges.',
+      ],
+      dependencies: [
+        'Weather feed provider integration agreement and SLA.',
+        'Multi-user shared cart infrastructure support.',
+      ],
+      successCriteria: 'Statistically significant conversion lift in pilot test markets with positive user NPS.',
     },
     {
-      id: 3,
-      question: 'Product Strategy: How does Zomato MoodMatch create a defensible competitive moat against Swiggy and quick-commerce players like Zepto/Blinkit?',
-      category: 'Product Strategy & Competitive Moats',
-      evaluationCriteria:
-        'Evaluates strategic vision, differentiation versus pure speed (quick commerce) or pure search (Swiggy), and data network effects.',
-      sampleAnswerApproach:
-        'Quick commerce dominates commodity snacking (chips, bread in 10 mins), while Swiggy focuses on transactional utility. Zomato MoodMatch shifts the battlefield from transactional utility to emotional empathy. Every mood interaction feeds proprietary taste-and-emotion vectors that cannot be easily copied, creating an emotional habit loop where hungry, exhausted users associate Zomato with instant emotional relief.',
+      phase: 'Scale / Growth Phase',
+      strategicFocus: 'Ecosystem Personalization & Commercial Moat',
+      keyInitiatives: [
+        'Long-term personal preference memory model with reinforcement learning.',
+        'Multi-modal voice and natural language mood conversational prompt.',
+        'Exclusive restaurant co-branded "Mood Match" menu activations.',
+      ],
+      keyDeliverables: [
+        'Automated real-time inventory and kitchen prep throttling guardrails.',
+        'Voice prompt pipeline supporting English, Hindi, and Hinglish.',
+        'Enterprise analytics dashboard tracking mood GMV velocity.',
+      ],
+      dependencies: [
+        'Speech recognition model deployment with Indian dialect tuning.',
+        'Merchant kitchen display system (KDS) live integration.',
+      ],
+      successCriteria: 'Sustained user repeat order frequency and high recommendation engagement across all tier markets.',
+    },
+  ],
+  featureSpecifications: [
+    {
+      featureName: '1-Tap Contextual Mood Selector',
+      description: 'Dynamic horizontal carousel on the home feed showing mood chips (e.g., Comfort, Quick Bite, Healthy, Indulgent) with contextual auto-highlighting.',
+      userValue: 'Eliminates choice paralysis and decision fatigue by offering an instant emotional starting point instead of scrolling through hundreds of restaurants.',
+      priority: 'Must Have',
+      dependencies: [
+        'User location and device time-of-day API',
+        'Home-screen UI widget slot entitlement',
+      ],
+      functionalRequirements: [
+        'Display 6 primary mood chips with localized iconography and micro-copy.',
+        'Dynamically rank chips based on current time (morning, late afternoon, midnight) and local weather.',
+        'Persist user manual override selection throughout the active session.',
+      ],
+      acceptanceCriteria: [
+        'Given a user opens the app at 11:30 PM, when the home screen loads, then "Late-Night Comfort" is prioritized in the first chip position.',
+        'Given a user taps any mood chip, when selected, then the feed refreshes with matching recommendations in under 300ms.',
+      ],
     },
     {
-      id: 4,
-      question: 'Execution & Edge Cases: How would you handle dietary and religious dietary restrictions (e.g., Pure Veg during Navratri or Halal requirements) in mood recommendations?',
-      category: 'Execution, Edge Cases & Ethics',
-      evaluationCriteria:
-        'Tests operational thoroughness, cultural context awareness in India, edge-case risk mitigation, and zero-defect quality standards.',
-      sampleAnswerApproach:
-        'Emphasize that dietary boundaries are non-negotiable "hard constraints", while moods are "soft scoring weights". The candidate filtering pipeline must strictly enforce user dietary preferences (Pure Veg, Halal, Jain, Vegan) before any semantic mood vector scoring occurs. Additionally, integrate dynamic festival calendar signals (e.g. Navratri fasting days in North India) to automatically adjust default mood decks.',
+      featureName: '3-Card Curated Dish Deck with AI Rationale',
+      description: 'Focused card stack displaying 3 hyper-relevant dishes tailored to the selected mood with transparent 1-sentence explanations ("Crispy hot pakoras because it is raining outside").',
+      userValue: 'Provides clear decision confidence through transparent rationale rather than black-box algorithmic suggestions.',
+      priority: 'Must Have',
+      dependencies: [
+        'Culinary semantic vector database',
+        'Restaurant real-time menu availability and outlet operating status',
+      ],
+      functionalRequirements: [
+        'Filter candidate dishes through strict dietary restrictions (Vegetarian, Vegan, Halal, Jain) before scoring.',
+        'Render high-resolution dish photo, user rating, estimated delivery ETA, and transparent mood rationale badge.',
+        'Provide a "Show 3 More" refresh action that retrieves the next tier of recommendations.',
+      ],
+      acceptanceCriteria: [
+        'Given a user has marked "Pure Veg" in their profile, when viewing the dish deck, then zero non-vegetarian items appear under any circumstance.',
+        'Given all 3 dishes are loaded, when the user inspects a card, then the explanation badge reflects the current weather or time context accurately.',
+      ],
     },
     {
-      id: 5,
-      question: 'Technical & Cross-Functional Trade-offs: The engineering team informs you that running real-time LLM inference for 50,000 concurrent dinner rush users will cost ₹25 Lakhs per month and add 1.8 seconds of latency. How do you resolve this?',
-      category: 'Technical Trade-offs & Engineering Collaboration',
-      evaluationCriteria:
-        'Tests technical literacy, pragmatism, cost vs latency optimization, caching strategies, and ability to negotiate feasible engineering solutions.',
-      sampleAnswerApproach:
-        'Do not run live generative LLM inference on every single raw user request. Decouple offline and online processing: pre-compute embeddings and candidate restaurant clusters in background batch jobs (hourly/daily) stored in a fast vector database (Milvus/Redis). At runtime, perform lightweight vector cosine similarity lookups taking < 20ms and costing a fraction of real-time generation, reserving LLM generation only for novel or long-tail conversational queries.',
+      featureName: 'Single-Tap Express Mood Checkout',
+      description: 'Streamlined CTA on each recommendation card that adds default customizations, confirms the default delivery address, and launches payment directly.',
+      userValue: 'Reduces total ordering journey from 7-8 friction-heavy screens to a single decisive tap.',
+      priority: 'Must Have',
+      dependencies: [
+        'Saved delivery address and payment tokenization service',
+        'Cart order-creation backend API',
+      ],
+      functionalRequirements: [
+        'Auto-populate default item options, cutlery preference, and default delivery address.',
+        'Display a 5-second countdown cancel bar allowing users to undo accidental clicks.',
+        'Route directly to UPI intent flow or instant one-click payment.',
+      ],
+      acceptanceCriteria: [
+        'Given a user clicks "Order Now" on a recommended dish, when payment succeeds, then the order status transitions to confirmed with live tracking.',
+        'Given the user triggers the 5-second undo timer, when clicked within the window, then the transaction is cleanly aborted with zero charge.',
+      ],
+    },
+    {
+      featureName: 'Weather & Hyper-Local Context Synchronizer',
+      description: 'Automated background module integrating regional meteorological feeds to surface weather-appropriate comfort cravings.',
+      userValue: 'Delivers spontaneous delight and taps into cultural and seasonal comfort dining traditions without requiring manual search.',
+      priority: 'Should Have',
+      dependencies: [
+        'External Weather API feed with lat/long resolution',
+        'Weather-to-culinary classification taxonomy rule engine',
+      ],
+      functionalRequirements: [
+        'Query weather conditions hourly per active geo-cluster with strict error fallbacks.',
+        'Trigger monsoon, heatwave, or winter comfort tags when conditions exceed defined thresholds.',
+        'Gracefully suppress weather modifiers if local weather feeds time out or report errors.',
+      ],
+      acceptanceCriteria: [
+        'Given rainfall is detected in the delivery pin code, when the user visits the home feed, then rain-comfort banners and dishes are highlighted.',
+        'Given the weather API fails to respond within 200ms, when the app loads, then standard time-of-day logic seamlessly executes without error.',
+      ],
+    },
+    {
+      featureName: 'Budget & Dietary Guardrail Sliders',
+      description: 'Inline lightweight filter pills allowing users to instantly constrain recommendations by budget ceiling (e.g., Under ₹250) and dietary preferences.',
+      userValue: 'Ensures users feel financially and nutritionally in control without navigating complex multi-page filter dialogs.',
+      priority: 'Should Have',
+      dependencies: [
+        'Item price index including packaging charges and taxes',
+        'Menu dietary attribute mapping service',
+      ],
+      functionalRequirements: [
+        'Provide price thresholds (Under ₹150, Under ₹300, Premium Treat) that instantly re-filter the deck.',
+        'Provide dietary toggles (Veg Only, High Protein, Low Calorie) that apply as non-negotiable constraints.',
+      ],
+      acceptanceCriteria: [
+        'Given a user selects "Under ₹250", when dishes render, then all displayed options satisfy the price condition inclusive of item GST.',
+        'Given active dietary filters, when switching moods, then the filters remain active and enforced across all subsequent cards.',
+      ],
     },
   ],
 };

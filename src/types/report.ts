@@ -107,20 +107,23 @@ export interface RiskItem {
   mitigation: string;
 }
 
-export interface RoadmapPhase {
-  phase: string;
-  timeframe: string;
-  focus: string;
-  deliverables: string[];
-  milestones: string;
+export interface ProductRoadmapPhase {
+  phase: string; // e.g. "MVP", "Beta", "Scale / Growth"
+  strategicFocus: string;
+  keyInitiatives: string[];
+  keyDeliverables: string[];
+  dependencies: string[];
+  successCriteria: string;
 }
 
-export interface InterviewQuestionItem {
-  id: number;
-  question: string;
-  category: string;
-  evaluationCriteria: string;
-  sampleAnswerApproach: string;
+export interface FeatureSpecificationItem {
+  featureName: string;
+  description: string;
+  userValue: string;
+  priority: 'Must Have' | 'Should Have' | 'Could Have' | string;
+  dependencies: string[];
+  functionalRequirements: string[];
+  acceptanceCriteria: string[];
 }
 
 export interface ProductReportData {
@@ -232,10 +235,6 @@ export interface ProductReportData {
     pricingStrategy: string;
     goTMarketStrategy: string[];
   };
-  roadmap: {
-    days30: RoadmapPhase;
-    days60: RoadmapPhase;
-    days90: RoadmapPhase;
-  };
-  pmInterviewQuestions: InterviewQuestionItem[];
+  productRoadmap: ProductRoadmapPhase[];
+  featureSpecifications: FeatureSpecificationItem[];
 }

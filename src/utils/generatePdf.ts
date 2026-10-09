@@ -29,8 +29,8 @@ export async function generatePdfReport(inputData: ProductReportData): Promise<v
     successMetrics,
     riskAnalysis,
     launchStrategy,
-    roadmap,
-    pmInterviewQuestions,
+    productRoadmap,
+    featureSpecifications,
   } = data;
 
   const doc = new jsPDF({
@@ -761,31 +761,78 @@ export async function generatePdfReport(inputData: ProductReportData): Promise<v
   addBulletPoints(launchStrategy.goTMarketStrategy);
 
   // -------------------------------------------------------------
-  // 19. 30/60/90 DAY ROADMAP
+  // 19. PRODUCT ROADMAP (PHASES: MVP, BETA, SCALE / GROWTH)
   // -------------------------------------------------------------
-  addSectionHeading('19', '30 / 60 / 90 Day Product Roadmap');
-  const formatRoadmapPhase = (phaseName: string, phaseData: any) => {
-    if (!phaseData) return;
-    addSubheading(`${phaseName} (${phaseData.timeframe || 'Month 1'}) — Focus: ${phaseData.focus || 'Foundation'}`);
-    const deliverables = safeArray(phaseData.deliverables);
-    addParagraph(`Milestones: ${phaseData.milestones || 'N/A'}`, 8.5, 6);
-    addSubheading('Deliverables:');
-    addBulletPoints(deliverables);
-  };
+  addSectionHeading('19', 'Product Roadmap');
+  safeArray(productRoadmap).forEach((phase, idx) => {
+    ensureSpace(90);
+    addSubheading(`${phase.phase || `Phase ${idx + 1}`}: Strategic Focus — ${phase.strategicFocus}`);
 
-  formatRoadmapPhase('Phase 1: 30 Days', roadmap.days30);
-  formatRoadmapPhase('Phase 2: 60 Days', roadmap.days60);
-  formatRoadmapPhase('Phase 3: 90 Days', roadmap.days90);
+    const initList = safeArray(phase.keyInitiatives);
+    const delivList = safeArray(phase.keyDeliverables);
+    const depList = safeArray(phase.dependencies);
+
+    autoTable(doc, {
+      startY: cursorY,
+      margin: { left: margin, right: margin },
+      head: [['Key Initiatives', 'Key Deliverables', 'Dependencies']],
+      body: [
+        [
+          initList.join('\n• ') ? '• ' + initList.join('\n• ') : 'None',
+          delivList.join('\n• ') ? '• ' + delivList.join('\n• ') : 'None',
+          depList.join('\n• ') ? '• ' + depList.join('\n• ') : 'None',
+        ],
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [241, 245, 249], textColor: [30, 41, 59], fontStyle: 'bold', fontSize: 8 },
+      styles: { fontSize: 7.5, cellPadding: 4, textColor: [71, 85, 105], overflow: 'linebreak' },
+      columnStyles: {
+        0: { cellWidth: 175 },
+        1: { cellWidth: 175 },
+        2: { cellWidth: 165 },
+      },
+    });
+    cursorY = (doc as any).lastAutoTable.finalY + 6;
+
+    addParagraph(`Success Criteria: ${phase.successCriteria || 'All deliverables accepted with zero critical defects.'}`, 8, 4);
+    cursorY += 4;
+  });
 
   // -------------------------------------------------------------
-  // 20. PM INTERVIEW QUESTIONS
+  // 20. FEATURE SPECIFICATION (IMPLEMENTATION-READY)
   // -------------------------------------------------------------
-  addSectionHeading('20', 'Product Management Interview Questions');
-  safeArray(pmInterviewQuestions).forEach((q) => {
-    ensureSpace(70);
-    addSubheading(`Q${q.id || 1} [${q.category || 'Product Design'}]: ${q.question || 'Product Question'}`);
-    addParagraph(`Evaluation Criteria: ${q.evaluationCriteria || 'N/A'}`, 8, 6);
-    addParagraph(`Recommended Framework / Answer Approach:\n${q.sampleAnswerApproach || 'N/A'}`, 8, 6);
+  addSectionHeading('20', 'Feature Specification');
+  safeArray(featureSpecifications).forEach((spec, idx) => {
+    ensureSpace(100);
+    addSubheading(`Feature Spec ${idx + 1}: ${spec.featureName} [Priority: ${spec.priority || 'Must Have'}]`);
+    addParagraph(`Description: ${spec.description}`, 8, 4);
+    addParagraph(`User Value: ${spec.userValue}`, 8, 4);
+
+    const depList = safeArray(spec.dependencies);
+    const frList = safeArray(spec.functionalRequirements);
+    const acList = safeArray(spec.acceptanceCriteria);
+
+    autoTable(doc, {
+      startY: cursorY,
+      margin: { left: margin, right: margin },
+      head: [['Dependencies', 'Functional Requirements', 'Acceptance Criteria (Gherkin)']],
+      body: [
+        [
+          depList.join('\n• ') ? '• ' + depList.join('\n• ') : 'None',
+          frList.join('\n• ') ? '• ' + frList.join('\n• ') : 'None',
+          acList.join('\n• ') ? '• ' + acList.join('\n• ') : 'None',
+        ],
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [248, 250, 252], textColor: [30, 41, 59], fontStyle: 'bold', fontSize: 8 },
+      styles: { fontSize: 7.5, cellPadding: 4, textColor: [71, 85, 105], overflow: 'linebreak' },
+      columnStyles: {
+        0: { cellWidth: 130 },
+        1: { cellWidth: 190 },
+        2: { cellWidth: 195 },
+      },
+    });
+    cursorY = (doc as any).lastAutoTable.finalY + 10;
   });
 
   // -------------------------------------------------------------

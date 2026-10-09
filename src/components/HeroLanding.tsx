@@ -117,7 +117,7 @@ export const HeroLanding: React.FC<HeroLandingProps> = ({
               Get your complete product strategy
             </h3>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Review a full 20-section PRD with user stories, acceptance criteria, system architecture, success metrics, and a 30/60/90 roadmap.
+              Review a full 20-section PRD with user stories, acceptance criteria, system architecture, success metrics, and phased roadmap.
             </p>
           </div>
         </div>
@@ -186,7 +186,7 @@ export const HeroLanding: React.FC<HeroLandingProps> = ({
               Automated PRD
             </h3>
             <p className="text-sm text-slate-600 leading-relaxed mb-4">
-              Generate development-ready engineering PRDs with user stories, Given/When/Then acceptance criteria, architecture, and interview questions.
+              Generate development-ready engineering PRDs with user stories, Given/When/Then acceptance criteria, architecture, and feature specifications.
             </p>
             <ul className="text-xs text-slate-500 space-y-1.5">
               <li className="flex items-center gap-1.5">
@@ -199,7 +199,7 @@ export const HeroLanding: React.FC<HeroLandingProps> = ({
               </li>
               <li className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>5 Targeted PM Interview Questions</span>
+                <span>Implementation-Ready Feature Specifications</span>
               </li>
             </ul>
           </div>

@@ -13,8 +13,8 @@ import {
   NonFunctionalRequirementItem,
   MetricItem,
   RiskItem,
-  RoadmapPhase,
-  InterviewQuestionItem,
+  ProductRoadmapPhase,
+  FeatureSpecificationItem,
 } from '../types/report.ts';
 
 /**
@@ -624,51 +624,124 @@ export function normalizeReport(raw: any): ProductReportData {
     ]),
   };
 
-  // 20. Roadmap
-  const mapPhase = (p: any, defaultPhaseName: string, defaultTime: string): RoadmapPhase => {
-    const item = typeof p === 'object' && p !== null ? p : {};
-    return {
-      phase: safeString(item.phase, defaultPhaseName),
-      timeframe: safeString(item.timeframe, defaultTime),
-      focus: safeString(item.focus, 'Core architectural foundation and testing.'),
-      deliverables: safeStringList(item.deliverables, ['Functional specifications', 'Alpha prototype']),
-      milestones: safeString(item.milestones, 'Initial validation complete with zero blocking issues.'),
-    };
-  };
-
-  const rawRoadmap = typeof data.roadmap === 'object' && data.roadmap !== null ? data.roadmap : {};
-  const roadmap = {
-    days30: mapPhase(rawRoadmap.days30, 'Phase 1: Discovery & Foundation', 'Days 1–30'),
-    days60: mapPhase(rawRoadmap.days60, 'Phase 2: Closed Beta & Optimization', 'Days 31–60'),
-    days90: mapPhase(rawRoadmap.days90, 'Phase 3: General Availability & Scale', 'Days 61–90'),
-  };
-
-  // 21. PM Interview Questions
-  let rawQuestions: any[] = [];
-  if (Array.isArray(data.pmInterviewQuestions)) {
-    rawQuestions = data.pmInterviewQuestions;
-  } else if (typeof data.pmInterviewQuestions === 'object' && data.pmInterviewQuestions !== null) {
-    rawQuestions = Object.values(data.pmInterviewQuestions);
-  } else if (typeof data.pmInterviewQuestions === 'string') {
-    rawQuestions = safeStringList(data.pmInterviewQuestions);
+  // 19. Product Roadmap (Phases: MVP, Beta, Scale / Growth)
+  let rawRoadmapList: any[] = [];
+  if (Array.isArray(data.productRoadmap)) {
+    rawRoadmapList = data.productRoadmap;
+  } else if (Array.isArray(data.roadmap)) {
+    rawRoadmapList = data.roadmap;
+  } else if (typeof data.productRoadmap === 'object' && data.productRoadmap !== null) {
+    rawRoadmapList = Object.values(data.productRoadmap);
+  } else if (typeof data.roadmap === 'object' && data.roadmap !== null) {
+    rawRoadmapList = Object.values(data.roadmap);
   }
-  const pmInterviewQuestions: InterviewQuestionItem[] = rawQuestions.map((q, i) => {
-    if (typeof q === 'string') {
-      return {
-        id: i + 1,
-        question: q,
-        category: 'Product Design & Strategy',
-        evaluationCriteria: 'Evaluates candidate analytical clarity and user empathy.',
-        sampleAnswerApproach: 'Structure answer with customer problem, metric goals, and technical trade-offs.',
-      };
-    }
-    const item = typeof q === 'object' && q !== null ? q : {};
+
+  const defaultPhases = [
+    { phase: 'MVP Phase', focus: 'Core Functional Validation & Critical User Path' },
+    { phase: 'Beta Phase', focus: 'Operational Robustness & Controlled Feedback Cohort' },
+    { phase: 'Scale / Growth Phase', focus: 'Ecosystem Expansion & Long-term Value Delivery' },
+  ];
+
+  const productRoadmap: ProductRoadmapPhase[] =
+    rawRoadmapList.length > 0
+      ? rawRoadmapList.map((p, i) => {
+          const item = typeof p === 'object' && p !== null ? p : {};
+          const fallback = defaultPhases[i] || { phase: `Phase ${i + 1}`, focus: 'Strategic Delivery' };
+          return {
+            phase: safeString(item.phase, fallback.phase),
+            strategicFocus: safeString(item.strategicFocus || item.focus, fallback.focus),
+            keyInitiatives: safeStringList(item.keyInitiatives || item.initiatives, [
+              'Establish scalable backend service contracts and data schema.',
+              'Implement primary user interactions and core workflow journeys.',
+            ]),
+            keyDeliverables: safeStringList(item.keyDeliverables || item.deliverables, [
+              'Validated feature implementation deployed to test environment.',
+              'Observability dashboards and telemetry pipelines operational.',
+            ]),
+            dependencies: safeStringList(item.dependencies, [
+              'Design tokens and UX wireframes sign-off.',
+              'Upstream API readiness and security review approval.',
+            ]),
+            successCriteria: safeString(
+              item.successCriteria || item.milestones,
+              'All acceptance criteria met with zero critical defects and verified core workflow throughput.'
+            ),
+          };
+        })
+      : defaultPhases.map((dp) => ({
+          phase: dp.phase,
+          strategicFocus: dp.focus,
+          keyInitiatives: [
+            'Establish scalable service contracts and baseline data flow.',
+            'Implement prioritized core workflow interactions.',
+          ],
+          keyDeliverables: [
+            'Validated functional capabilities deployed in test environment.',
+            'Telemetry and metrics observability live in production.',
+          ],
+          dependencies: ['API contracts finalized', 'Security & UX sign-offs completed'],
+          successCriteria: 'Core workflows successfully complete with zero critical system blockers.',
+        }));
+
+  // 20. Feature Specification (Implementation-ready translation of proposed features)
+  let rawFeatureSpecs: any[] = [];
+  if (Array.isArray(data.featureSpecifications)) {
+    rawFeatureSpecs = data.featureSpecifications;
+  } else if (Array.isArray(data.featureSpecification)) {
+    rawFeatureSpecs = data.featureSpecification;
+  } else if (typeof data.featureSpecifications === 'object' && data.featureSpecifications !== null) {
+    rawFeatureSpecs = Object.values(data.featureSpecifications);
+  } else if (typeof data.featureSpecification === 'object' && data.featureSpecification !== null) {
+    rawFeatureSpecs = Object.values(data.featureSpecification);
+  }
+
+  // Fallback to proposedFeatures if empty
+  if (rawFeatureSpecs.length === 0) {
+    const mustList = safeArray(proposedFeatures.mustHave);
+    const shouldList = safeArray(proposedFeatures.shouldHave);
+    const combinedFeatures = [...mustList, ...shouldList].slice(0, 5);
+    rawFeatureSpecs = combinedFeatures.map((f, i) => ({
+      featureName: f.title || `Core Feature ${i + 1}`,
+      description: f.description || 'Core capability delivering user value.',
+      userValue: f.rationale || 'Addresses major pain point identified in user research.',
+      priority: i < 3 ? 'Must Have' : 'Should Have',
+      dependencies: ['Base application infrastructure', 'User profile and authentication state'],
+      functionalRequirements: [
+        `The system shall allow users to interact with ${f.title || 'this feature'} reliably.`,
+        'Input state changes shall trigger validated visual feedback within standard response limits.',
+      ],
+      acceptanceCriteria: [
+        `Given the user is on the primary screen, when activating ${f.title || 'the feature'}, then the requested workflow completes successfully.`,
+        'Given invalid parameters, when submitted, then explicit user-friendly error guidance is displayed.',
+      ],
+    }));
+  }
+
+  const featureSpecifications: FeatureSpecificationItem[] = rawFeatureSpecs.map((spec, i) => {
+    const item = typeof spec === 'object' && spec !== null ? spec : {};
     return {
-      id: typeof item.id === 'number' ? item.id : i + 1,
-      question: safeString(item.question, `How would you prioritize trade-offs for this feature?`),
-      category: safeString(item.category, 'Product Design & Strategy'),
-      evaluationCriteria: safeString(item.evaluationCriteria, 'Evaluates candidate analytical clarity and user empathy.'),
-      sampleAnswerApproach: safeString(item.sampleAnswerApproach, 'Structure answer with customer problem, metric goals, and technical trade-offs.'),
+      featureName: safeString(item.featureName || item.name || item.title, `Feature ${i + 1}`),
+      description: safeString(
+        item.description,
+        'Detailed functional capability designed to resolve targeted user friction.'
+      ),
+      userValue: safeString(
+        item.userValue || item.value || item.rationale,
+        'Delivers direct workflow efficiency and reduces cognitive overhead.'
+      ),
+      priority: safeString(item.priority, i === 0 ? 'Must Have' : 'Should Have'),
+      dependencies: safeStringList(item.dependencies, [
+        'Shared UI design system components',
+        'Backend service endpoint readiness',
+      ]),
+      functionalRequirements: safeStringList(item.functionalRequirements || item.requirements, [
+        'System shall enforce input validation before processing state changes.',
+        'System shall log relevant interaction events for performance tracking.',
+      ]),
+      acceptanceCriteria: safeStringList(item.acceptanceCriteria || item.criteria, [
+        'Given standard input conditions, when executed, then state transitions correctly without data loss.',
+        'Given edge case or network interruptions, when encountered, then graceful degradation occurs.',
+      ]),
     };
   });
 
@@ -692,7 +765,7 @@ export function normalizeReport(raw: any): ProductReportData {
     successMetrics,
     riskAnalysis,
     launchStrategy,
-    roadmap,
-    pmInterviewQuestions,
+    productRoadmap,
+    featureSpecifications,
   };
 }

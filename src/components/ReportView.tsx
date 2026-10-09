@@ -54,8 +54,8 @@ const SECTION_NAV = [
   { id: 'sec-16', num: '16', title: 'Success Metrics' },
   { id: 'sec-17', num: '17', title: 'Risk Analysis' },
   { id: 'sec-18', num: '18', title: 'Launch Strategy' },
-  { id: 'sec-19', num: '19', title: '30/60/90 Day Roadmap' },
-  { id: 'sec-20', num: '20', title: 'PM Interview Questions' },
+  { id: 'sec-19', num: '19', title: 'Product Roadmap' },
+  { id: 'sec-20', num: '20', title: 'Feature Specification' },
 ];
 
 /**
@@ -1626,111 +1626,149 @@ export const ReportView: React.FC<ReportViewProps> = ({ report: rawReport, onNew
             </section>
           </SectionErrorBoundary>
 
-          {/* Card 19: 30/60/90 Day Roadmap (TABLE REQUIRED) */}
-          <SectionErrorBoundary sectionTitle="19. 30/60/90 Day Roadmap">
+          {/* Card 19: Product Roadmap (Phased Roadmap) */}
+          <SectionErrorBoundary sectionTitle="19. Product Roadmap">
             <section
               id="sec-19"
               className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs scroll-mt-28"
             >
               <div className="border-b border-slate-100 pb-4 mb-5">
                 <div className="text-xs font-mono text-indigo-600 font-semibold mb-1">
-                  19. Delivery Timeline
+                  19. Phased Execution
                 </div>
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  30 / 60 / 90 Day Roadmap
+                  Product Roadmap (MVP · Beta · Scale / Growth)
                 </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Logical strategic phasing with initiatives, deliverables, dependencies, and success criteria.
+                </p>
               </div>
 
-              <div className="overflow-x-auto -mx-6 sm:mx-0">
-                <table className="w-full text-left border-collapse text-xs sm:text-sm">
-                  <thead>
-                    <tr className="bg-slate-100/80 border-y border-slate-200 text-slate-700 font-semibold">
-                      <th className="py-3 px-3 sm:px-4">Phase</th>
-                      <th className="py-3 px-3 sm:px-4">Timeframe</th>
-                      <th className="py-3 px-3 sm:px-4">Strategic Focus</th>
-                      <th className="py-3 px-3 sm:px-4">Key Deliverables</th>
-                      <th className="py-3 px-3 sm:px-4">Core Milestone</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {[report.roadmap?.days30, report.roadmap?.days60, report.roadmap?.days90].filter(Boolean).map(
-                      (phase, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/60 transition-colors align-top">
-                          <td className="py-3.5 px-3 sm:px-4 font-bold text-slate-900 whitespace-nowrap">
-                            {phase?.phase || `Phase ${idx + 1}`}
-                          </td>
-                          <td className="py-3.5 px-3 sm:px-4 font-mono text-indigo-700 whitespace-nowrap">
-                            {phase?.timeframe || `Days ${(idx * 30) + 1}–${(idx + 1) * 30}`}
-                          </td>
-                          <td className="py-3.5 px-3 sm:px-4 text-slate-700 min-w-[150px]">
-                            {phase?.focus || ''}
-                          </td>
-                          <td className="py-3.5 px-3 sm:px-4 text-slate-600 min-w-[200px]">
-                            <FlexibleList
-                              items={phase?.deliverables}
-                              bulletChar="•"
-                              className="space-y-1"
-                            />
-                          </td>
-                          <td className="py-3.5 px-3 sm:px-4 font-medium text-emerald-900 bg-emerald-50/30 min-w-[160px]">
-                            {phase?.milestones || ''}
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
+              <div className="space-y-6">
+                {safeArray(report.productRoadmap).map((phase, idx) => (
+                  <div
+                    key={idx}
+                    className="p-5 sm:p-6 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
+                      <div>
+                        <span className="inline-block px-2.5 py-1 text-xs font-bold font-mono rounded-md bg-indigo-100 text-indigo-800 mb-1">
+                          {phase.phase || `Phase ${idx + 1}`}
+                        </span>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                          Strategic Focus: {phase.strategicFocus}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs sm:text-sm">
+                      <div className="p-4 bg-white rounded-lg border border-slate-200/80">
+                        <strong className="text-slate-900 block mb-2 font-semibold">Key Initiatives</strong>
+                        <FlexibleList
+                          items={phase.keyInitiatives}
+                          bulletChar="•"
+                          className="space-y-1.5"
+                        />
+                      </div>
+
+                      <div className="p-4 bg-white rounded-lg border border-slate-200/80">
+                        <strong className="text-slate-900 block mb-2 font-semibold">Key Deliverables</strong>
+                        <FlexibleList
+                          items={phase.keyDeliverables}
+                          bulletChar="•"
+                          className="space-y-1.5"
+                        />
+                      </div>
+
+                      <div className="p-4 bg-white rounded-lg border border-slate-200/80">
+                        <strong className="text-slate-900 block mb-2 font-semibold">Dependencies</strong>
+                        <FlexibleList
+                          items={phase.dependencies}
+                          bulletChar="•"
+                          className="space-y-1.5 text-slate-600"
+                        />
+                      </div>
+
+                      <div className="p-4 bg-emerald-50/50 rounded-lg border border-emerald-100">
+                        <strong className="text-emerald-950 block mb-2 font-semibold">Success Criteria</strong>
+                        <p className="text-emerald-900 leading-relaxed break-words">
+                          {phase.successCriteria}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           </SectionErrorBoundary>
 
-          {/* Card 20: Product Manager Interview Questions */}
-          <SectionErrorBoundary sectionTitle="20. PM Interview Questions">
+          {/* Card 20: Feature Specification (Implementation-Ready) */}
+          <SectionErrorBoundary sectionTitle="20. Feature Specification">
             <section
               id="sec-20"
               className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs scroll-mt-28"
             >
               <div className="border-b border-slate-100 pb-4 mb-5">
                 <div className="text-xs font-mono text-indigo-600 font-semibold mb-1">
-                  20. PM Interview Mastery
+                  20. Engineering Handoff
                 </div>
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  Product Manager Interview Questions (5 Scenarios)
+                  Feature Specification (Implementation-Ready)
                 </h2>
                 <p className="text-xs text-slate-500 mt-1">
-                  Targeted PM interview questions for design, metrics, trade-offs, and strategy.
+                  Translates proposed product features into detailed specifications with functional requirements and Gherkin acceptance criteria.
                 </p>
               </div>
 
-              <div className="space-y-4">
-                {safeArray(report.pmInterviewQuestions).map((q) => (
+              <div className="space-y-6">
+                {safeArray(report.featureSpecifications).map((spec, idx) => (
                   <div
-                    key={q.id}
-                    className="p-5 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-slate-50 transition-colors"
+                    key={idx}
+                    className="p-5 sm:p-6 rounded-xl border border-slate-200 bg-slate-50/40 hover:bg-slate-50 transition-colors"
                   >
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="font-mono text-xs font-bold text-indigo-700">
-                        Question {q.id}
-                      </span>
-                      <span className="text-xs font-medium text-slate-500">{q.category}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-mono text-xs font-bold text-indigo-700">
+                            SPEC #{idx + 1}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 text-xs font-semibold rounded-md ${
+                              spec.priority.toLowerCase().includes('must')
+                                ? 'bg-indigo-100 text-indigo-800'
+                                : spec.priority.toLowerCase().includes('should')
+                                ? 'bg-amber-100 text-amber-800'
+                                : 'bg-slate-100 text-slate-700'
+                            }`}
+                          >
+                            {spec.priority}
+                          </span>
+                        </div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                          {spec.featureName}
+                        </h3>
+                      </div>
                     </div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-3 leading-snug">
-                      {q.question}
-                    </h3>
 
-                    <div className="space-y-2 text-xs sm:text-sm">
-                      <div className="p-3 bg-white rounded-lg border border-slate-200/80">
-                        <span className="font-semibold text-slate-800 block mb-1">
-                          Evaluation Criteria:
-                        </span>
-                        <p className="text-slate-600 leading-relaxed">{q.evaluationCriteria}</p>
+                    <div className="mt-3 text-xs sm:text-sm text-slate-600 space-y-2">
+                      <p><strong className="text-slate-800">Description:</strong> {spec.description}</p>
+                      <p><strong className="text-slate-800">User Value:</strong> {spec.userValue}</p>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+                      <div className="p-3.5 bg-white rounded-lg border border-slate-200/80">
+                        <strong className="text-slate-900 block mb-2 font-semibold">Dependencies</strong>
+                        <FlexibleList items={spec.dependencies} bulletChar="•" className="space-y-1" />
                       </div>
 
-                      <div className="p-3 bg-emerald-50/40 rounded-lg border border-emerald-100">
-                        <span className="font-semibold text-emerald-950 block mb-1">
-                          Strong Answer Approach:
-                        </span>
-                        <p className="text-emerald-900 leading-relaxed">{q.sampleAnswerApproach}</p>
+                      <div className="p-3.5 bg-white rounded-lg border border-slate-200/80">
+                        <strong className="text-slate-900 block mb-2 font-semibold">Functional Requirements</strong>
+                        <FlexibleList items={spec.functionalRequirements} bulletChar="•" className="space-y-1" />
+                      </div>
+
+                      <div className="p-3.5 bg-indigo-50/40 rounded-lg border border-indigo-100">
+                        <strong className="text-indigo-950 block mb-2 font-semibold">Acceptance Criteria (Gherkin)</strong>
+                        <FlexibleList items={spec.acceptanceCriteria} bulletChar="•" className="space-y-1 text-indigo-900" />
                       </div>
                     </div>
                   </div>

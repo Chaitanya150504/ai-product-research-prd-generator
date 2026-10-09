@@ -23,8 +23,8 @@ export function generateMarkdownReport(inputData: ProductReportData): string {
     successMetrics,
     riskAnalysis,
     launchStrategy,
-    roadmap,
-    pmInterviewQuestions,
+    productRoadmap,
+    featureSpecifications,
   } = data;
 
   let md = `# Product Strategy & PRD: ${meta.productName}\n\n`;
@@ -253,23 +253,33 @@ export function generateMarkdownReport(inputData: ProductReportData): string {
   launchStrategy.goTMarketStrategy.forEach((g) => (md += `- ${g}\n`));
   md += `\n`;
 
-  // 19. 30/60/90 Day Roadmap
-  md += `## 19. 30/60/90 Day Roadmap\n\n`;
-  const phases = [roadmap.days30, roadmap.days60, roadmap.days90];
-  phases.forEach((p) => {
-    md += `### ${p.phase} (${p.timeframe})\n`;
-    md += `**Focus:** ${p.focus}\n\n`;
-    md += `**Key Deliverables:**\n`;
-    p.deliverables.forEach((d) => (md += `- ${d}\n`));
-    md += `\n**Milestone:** ${p.milestones}\n\n`;
+  // 19. Product Roadmap
+  md += `## 19. Product Roadmap\n\n`;
+  productRoadmap.forEach((p) => {
+    md += `### ${p.phase}\n`;
+    md += `**Strategic Focus:** ${p.strategicFocus}\n\n`;
+    md += `**Key Initiatives:**\n`;
+    p.keyInitiatives.forEach((ki) => (md += `- ${ki}\n`));
+    md += `\n**Key Deliverables:**\n`;
+    p.keyDeliverables.forEach((kd) => (md += `- ${kd}\n`));
+    md += `\n**Dependencies:**\n`;
+    p.dependencies.forEach((d) => (md += `- ${d}\n`));
+    md += `\n**Success Criteria:** ${p.successCriteria}\n\n`;
   });
 
-  // 20. PM Interview Questions
-  md += `## 20. Product Manager Interview Questions\n\n`;
-  pmInterviewQuestions.forEach((q) => {
-    md += `### Q${q.id} [${q.category}]: ${q.question}\n\n`;
-    md += `**Evaluation Criteria:**\n${q.evaluationCriteria}\n\n`;
-    md += `**Sample Answer Approach:**\n${q.sampleAnswerApproach}\n\n`;
+  // 20. Feature Specification
+  md += `## 20. Feature Specification\n\n`;
+  featureSpecifications.forEach((spec, idx) => {
+    md += `### Feature ${idx + 1}: ${spec.featureName} [${spec.priority}]\n\n`;
+    md += `**Description:** ${spec.description}\n\n`;
+    md += `**User Value:** ${spec.userValue}\n\n`;
+    md += `**Dependencies:**\n`;
+    spec.dependencies.forEach((d) => (md += `- ${d}\n`));
+    md += `\n**Functional Requirements:**\n`;
+    spec.functionalRequirements.forEach((fr) => (md += `- ${fr}\n`));
+    md += `\n**Acceptance Criteria (Gherkin):**\n`;
+    spec.acceptanceCriteria.forEach((ac) => (md += `- ${ac}\n`));
+    md += `\n`;
   });
 
   return md;

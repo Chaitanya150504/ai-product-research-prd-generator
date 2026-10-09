@@ -119,12 +119,27 @@ CRITICAL REQUIREMENTS (Deliver all 20 sections with high-density, concrete entri
 16. successMetrics: { northStarMetric: { name, target, why }, metricsTable: MetricItem[] } covering North Star, Activation Rate, Retention Rate, DAU, MAU, Conversion Rate, Feature Adoption, NPS, CSAT, Revenue, LTV, CAC.
 17. riskAnalysis: { businessRisks: Risk[], technicalRisks: Risk[], operationalRisks: Risk[], legalRisks: Risk[] } where Risk is { risk, severity: "High"|"Medium"|"Low", mitigation }.
 18. launchStrategy: { alpha: { duration: string, cohort: string, objectives: string[] }, beta: { duration: string, cohort: string, objectives: string[] }, publicLaunch: { strategy: string, rolloutPhases: string[] }, marketingStrategy: string[] (CRITICAL: MUST be a JSON array of strings e.g. ["Strategy 1", "Strategy 2"], NEVER a JSON object), pricingStrategy: string, goTMarketStrategy: string[] (MUST be a JSON array of strings) }.
-19. roadmap: { days30: Phase, days60: Phase, days90: Phase } where Phase is { phase, timeframe, focus, deliverables: string[], milestones }.
-20. pmInterviewQuestions: EXACTLY 5 questions with { id: number, question, category, evaluationCriteria, sampleAnswerApproach }.
+19. productRoadmap: JSON array of phases (such as "MVP", "Beta", "Scale / Growth"). Do not use mandatory 30/60/90-day timelines. Do not invent specific dates, revenue figures, user counts, conversion percentages, or other factual business metrics unless provided by the user. Each phase item MUST contain:
+    - phase: string (e.g. "MVP", "Beta", "Scale / Growth")
+    - strategicFocus: string
+    - keyInitiatives: string[]
+    - keyDeliverables: string[]
+    - dependencies: string[]
+    - successCriteria: string
+20. featureSpecifications: JSON array of implementation-ready specifications translating proposed features into detailed engineering requirements (complementing Section 14 PRD). For each important proposed feature include:
+    - featureName: string
+    - description: string
+    - userValue: string
+    - priority: "Must Have" | "Should Have" | "Could Have"
+    - dependencies: string[]
+    - functionalRequirements: string[]
+    - acceptanceCriteria: string[]
 
 CRITICAL SCHEMA INTEGRITY RULES:
-- All fields designated as arrays (marketingStrategy, goTMarketStrategy, rolloutPhases, assumptions, SWOT strengths/weaknesses/opportunities/threats, MoSCoW lists, userStories, etc.) MUST be JSON arrays [ ... ], NEVER JSON objects { ... } or raw strings.
+- All fields designated as arrays (productRoadmap, featureSpecifications, marketingStrategy, goTMarketStrategy, rolloutPhases, assumptions, SWOT strengths/weaknesses/opportunities/threats, MoSCoW lists, userStories, etc.) MUST be JSON arrays [ ... ], NEVER JSON objects { ... } or raw strings.
 - Specifically, launchStrategy.marketingStrategy MUST be an array of at least 3 strings.
+- productRoadmap MUST be an array of roadmap phase objects with strategicFocus, keyInitiatives, keyDeliverables, dependencies, and successCriteria.
+- featureSpecifications MUST be an array of feature specification objects with functionalRequirements and acceptanceCriteria.
 
 Return ONLY valid JSON matching this schema. No markdown formatting, no code fences.`;
 
