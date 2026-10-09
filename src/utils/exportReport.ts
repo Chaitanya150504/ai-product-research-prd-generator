@@ -1,6 +1,8 @@
 import { ProductReportData } from '../types/report.ts';
+import { normalizeReport } from './normalizeReport.ts';
 
-export function generateMarkdownReport(data: ProductReportData): string {
+export function generateMarkdownReport(inputData: ProductReportData): string {
+  const data = normalizeReport(inputData);
   const {
     meta,
     executiveSummary,

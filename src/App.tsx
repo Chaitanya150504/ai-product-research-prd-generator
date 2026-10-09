@@ -8,9 +8,11 @@ import { Header } from './components/Header.tsx';
 import { HeroLanding } from './components/HeroLanding.tsx';
 import { LoadingScreen } from './components/LoadingScreen.tsx';
 import { ReportView } from './components/ReportView.tsx';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { ProductInput, ProductReportData } from './types/report.ts';
 import { sampleZomatoReport } from './data/sampleReport.ts';
 import { generateMarkdownReport, downloadFile } from './utils/exportReport.ts';
+import { normalizeReport } from './utils/normalizeReport.ts';
 import { AlertCircle, RefreshCw, FileText } from 'lucide-react';
 
 const INITIAL_SAMPLE_INPUT: ProductInput = {
@@ -72,7 +74,7 @@ export default function App() {
       if (!response.ok) {
         // If it's Zomato, use verified sample report as resilient fallback
         if (targetInput.productName.toLowerCase().includes('zomato')) {
-          setReport(sampleZomatoReport);
+          setReport(normalizeReport(sampleZomatoReport));
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
@@ -81,12 +83,13 @@ export default function App() {
       }
 
       const reportData: ProductReportData = await response.json();
-      setReport(reportData);
+      const safeReport = normalizeReport(reportData);
+      setReport(safeReport);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
       console.error('Error generating report:', err);
       if (targetInput.productName.toLowerCase().includes('zomato')) {
-        setReport(sampleZomatoReport);
+        setReport(normalizeReport(sampleZomatoReport));
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setError(
@@ -182,7 +185,12 @@ export default function App() {
         {isLoading ? (
           <LoadingScreen productName={formData.productName} />
         ) : report ? (
-          <ReportView report={report} onNewReport={handleNewReport} />
+          <ErrorBoundary
+            fallbackTitle="Unable to Display Report"
+            onReset={handleNewReport}
+          >
+            <ReportView report={report} onNewReport={handleNewReport} />
+          </ErrorBoundary>
         ) : (
           <HeroLanding
             formData={formData}

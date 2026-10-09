@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { sampleZomatoReport } from '../src/data/sampleReport.ts';
+import { normalizeReport } from '../src/utils/normalizeReport.ts';
 
 // Helper to send JSON responses across Vercel serverless and Express runtimes
 function sendJson(res: any, statusCode: number, data: any) {
@@ -117,9 +118,13 @@ CRITICAL REQUIREMENTS (Deliver all 20 sections with high-density, concrete entri
 15. technicalArchitecture: { frontend, backend, database, aiModel, cloud, authentication, analytics, architecturalOverview }.
 16. successMetrics: { northStarMetric: { name, target, why }, metricsTable: MetricItem[] } covering North Star, Activation Rate, Retention Rate, DAU, MAU, Conversion Rate, Feature Adoption, NPS, CSAT, Revenue, LTV, CAC.
 17. riskAnalysis: { businessRisks: Risk[], technicalRisks: Risk[], operationalRisks: Risk[], legalRisks: Risk[] } where Risk is { risk, severity: "High"|"Medium"|"Low", mitigation }.
-18. launchStrategy: { alpha: { duration, cohort, objectives: string[] }, beta: { duration, cohort, objectives: string[] }, publicLaunch: { strategy, rolloutPhases: string[] }, marketingStrategy: string[], pricingStrategy: string, goTMarketStrategy: string[] }.
+18. launchStrategy: { alpha: { duration: string, cohort: string, objectives: string[] }, beta: { duration: string, cohort: string, objectives: string[] }, publicLaunch: { strategy: string, rolloutPhases: string[] }, marketingStrategy: string[] (CRITICAL: MUST be a JSON array of strings e.g. ["Strategy 1", "Strategy 2"], NEVER a JSON object), pricingStrategy: string, goTMarketStrategy: string[] (MUST be a JSON array of strings) }.
 19. roadmap: { days30: Phase, days60: Phase, days90: Phase } where Phase is { phase, timeframe, focus, deliverables: string[], milestones }.
 20. pmInterviewQuestions: EXACTLY 5 questions with { id: number, question, category, evaluationCriteria, sampleAnswerApproach }.
+
+CRITICAL SCHEMA INTEGRITY RULES:
+- All fields designated as arrays (marketingStrategy, goTMarketStrategy, rolloutPhases, assumptions, SWOT strengths/weaknesses/opportunities/threats, MoSCoW lists, userStories, etc.) MUST be JSON arrays [ ... ], NEVER JSON objects { ... } or raw strings.
+- Specifically, launchStrategy.marketingStrategy MUST be an array of at least 3 strings.
 
 Return ONLY valid JSON matching this schema. No markdown formatting, no code fences.`;
 
@@ -176,14 +181,15 @@ Return ONLY valid JSON matching this schema. No markdown formatting, no code fen
       generatedAt: new Date().toISOString(),
     };
 
-    return sendJson(res, 200, parsedReport);
+    const validatedReport = normalizeReport(parsedReport);
+    return sendJson(res, 200, validatedReport);
   } catch (error: any) {
     console.error('Error in /api/generate-report:', error?.message || error);
 
     // If request was for Zomato and Gemini experienced capacity or rate limit issues
     if (req.body?.productName && req.body.productName.toLowerCase().includes('zomato')) {
       console.log('Serving verified Zomato sample report fallback on error.');
-      return sendJson(res, 200, sampleZomatoReport);
+      return sendJson(res, 200, normalizeReport(sampleZomatoReport));
     }
 
     return sendJson(res, 500, {
