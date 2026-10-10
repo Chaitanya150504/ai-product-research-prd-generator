@@ -1,4 +1,5 @@
 import { sampleZomatoReport } from '../src/data/sampleReport.ts';
+import { normalizeReport } from '../src/utils/normalizeReport.ts';
 
 function sendJson(res: any, statusCode: number, data: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,5 +26,5 @@ export default async function handler(req: any, res: any) {
     return res.end();
   }
 
-  return sendJson(res, 200, sampleZomatoReport);
+  return sendJson(res, 200, normalizeReport(sampleZomatoReport));
 }

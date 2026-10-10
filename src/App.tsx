@@ -80,8 +80,24 @@ export default function App() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed with status: ${response.status}`);
+        let errorMessage = '';
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch (_) {
+          // Response body was not JSON (e.g. edge gateway HTML error)
+        }
+
+        if (!errorMessage) {
+          if (response.status === 504) {
+            errorMessage = 'Server generation timed out (504). Please try again or test with a sample product.';
+          } else {
+            errorMessage = `Failed with status: ${response.status}`;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const reportData: ProductReportData = await response.json();
